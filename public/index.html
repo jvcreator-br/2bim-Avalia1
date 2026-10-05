@@ -13,6 +13,12 @@
       <p>Escolha um número entre 1 e 100. Cada número gera uma figura diferente, assinada com o seu e-mail.</p>
     </header>
 
+    <section aria-label="Login Google">
+      <div id="login-google"></div>
+      <p id="status-login" role="status" aria-live="polite">Entre com sua conta Google.</p>
+      <button id="sair-google" type="button" hidden>Sair do login</button>
+    </section>
+
     <form id="formulario" novalidate>
       <label for="numero">Número</label>
       <input id="numero" name="numero" type="number" min="1" max="100" step="1" required placeholder="42">
@@ -29,6 +35,50 @@
 
     <button id="baixar" type="button" hidden>Baixar SVG</button>
   </main>
+
+
+  <script>
+    (() => {
+      let idToken = "";
+      const status = document.getElementById("status-login");
+      const sair = document.getElementById("sair-google");
+      // O token fica apenas na memoria e sera enviado para a API na proxima etapa.
+      window.obterTokenGoogle = () => idToken;
+      window.iniciarLoginGoogle = () => {
+        if (!window.google?.accounts?.id) {
+          status.textContent = "Nao foi possivel carregar o login Google. Recarregue a pagina.";
+          return;
+        }
+        google.accounts.id.initialize({
+          client_id: "778231462173-1akqnhjru0ll1kg2amrit1ja5v3le6fi.apps.googleusercontent.com",
+          auto_select: false,
+          callback: (resposta) => {
+            if (typeof resposta.credential !== "string" || !resposta.credential) {
+              status.textContent = "Nao foi possivel concluir o login. Tente novamente.";
+              return;
+            }
+            idToken = resposta.credential;
+            status.textContent = "Login Google recebido.";
+            sair.hidden = false;
+          }
+        });
+        google.accounts.id.renderButton(document.getElementById("login-google"), {
+          theme: "outline", size: "large", text: "signin_with", locale: "pt-BR"
+        });
+      };
+      sair.addEventListener("click", () => {
+        idToken = "";
+        google.accounts.id.disableAutoSelect();
+        status.textContent = "Voce saiu do login. Entre novamente para continuar.";
+        sair.hidden = true;
+        document.getElementById("desenho").replaceChildren();
+        document.getElementById("baixar").hidden = true;
+      });
+    })();
+  </script>
+  <script src="https://accounts.google.com/gsi/client?hl=pt-BR" async
+    onload="iniciarLoginGoogle()"
+    onerror="document.getElementById('status-login').textContent='Falha ao carregar o login Google. Recarregue a pagina.'"></script>
 
   <script type="module" src="script.js"></script>
 </body>
