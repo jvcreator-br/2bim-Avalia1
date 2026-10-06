@@ -24,7 +24,7 @@ O token fica somente na memória da página. Ao recarregar ou sair, é necessár
 - `public/style.css`: aparência da página.
 - `lib/desenho.js`: função original de geração do SVG, executada no servidor.
 - `functions/api/desenho.js`: valida o pedido e o login antes de gerar a figura.
-- Evidência pendente: entrar com Google no site, gerar o número 80 (dois últimos dígitos do RA), baixar o SVG e salvar em `evidencias/exemplo.svg`.
+- `evidencias/exemplo.svg`: desenho de número 80, correspondente aos dois últimos dígitos do RA, gerado após login Google e baixado do site publicado.
 
 ## API
 
